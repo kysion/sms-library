@@ -7,12 +7,19 @@ import (
 	"github.com/kysion/sms-library/sms_permission"
 )
 
-// InitPermission 初始化权限树
-func InitPermission(module sms_interface.IModules, factory base_permission.IPermission) []base_permission.IPermission {
+// InitPermission 初始化权限树，需要先初始化完成 base_permission.Factory
+func InitPermission(module sms_interface.IModules, permission base_permission.IPermission) []base_permission.IPermission {
+	if base_permission.Factory == nil {
+		return nil
+	}
+
+	if permission == nil {
+		permission = base_permission.Factory()
+	}
 
 	result := []base_permission.IPermission{
 		// 资质
-		factory.SetId(5947986066667973).
+		permission.SetId(5947986066667973).
 			SetName(module.T(context.TODO(), "{#SmsName}")).
 			SetIdentifier(module.GetConfig().Identifier.Sms).
 			SetType(1).

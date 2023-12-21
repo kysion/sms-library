@@ -1,19 +1,21 @@
 server:
   address: "127.0.0.1:7777"
-  serverRoot: "/resources"
+  serverRoot: "/resource"
   dumpRouterMap: false
   routeOverWrite: true
   accessLogEnabled: false
   SessionIdName: "KysionSmsLibrarySessionId"
   sessionPath: "temp/sessions/sms_library_sessions"    # Session文件存储目录
-  openapiPath: "/openapi/sms_library.json"
-  swaggerPath: "/docs/sms_library"
+  openapiPath: "/api/openapi.json"
+  swaggerPath: "/api/docs"
+  swaggerJsURL: "https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js" # 自定义 文档 JS 镜像地址，需要 gf 2.6.0 以上版本才支持
+
 
 service:
   # 用户表ID生成器，分布式终端标识，取值范围 1 ~ 63，解决分布式多服务横向扩展时保证生成的ID不重复
   idGeneratorWorkerId: 1
   # 接口前缀
-  apiPrefix: "/kysion/sms_library"
+  apiPrefix: "/api"
   sms:
     qyxs:
       domain: "http://47.107.243.165:8088"
@@ -37,7 +39,7 @@ upload:
   # 用戶1分钟内限制上传最大文件数量
   fileMaxUploadCountMinute: 10
   # 文件上传的默认保存路径
-  path: "resources/upload"
+  path: "resource/upload"
   temp: "temp/upload"
 
 # 数据库连接配置

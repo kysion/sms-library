@@ -6,7 +6,8 @@ type SmsSendMessageReq struct {
 	TemplateCode string   `json:"templateCode"  dc:"模版Code"`
 	Phones       []string `json:"phones"  dc:"手机号集合"`
 	Params       []string `json:"params"  dc:"参数列表"`
-	CaptchaType  int      `json:"captchaType" v:"required#参树校验失败" dc:"验证码类型：1注册，2登录，4找回用户名/修改用户名，8找回密码/重置密码"`
+	//CaptchaType  int      `json:"captchaType" v:"required#参树校验失败" dc:"验证码类型：1注册，2登录，4找回用户名/修改用户名，8找回密码/重置密码"`
+	CaptchaType int `json:"captchaType" v:"required#参数校验失败" dc:"验证码类型：1注册，2登录，4找回用户名/修改用户名，8找回密码/重置密码，16设置手机号码，32设置邮箱，64忘记用户名&密码"`
 }
 
 // SmsReceiveSmsReq 接收短信对象

@@ -9,8 +9,12 @@ import (
 	"github.com/kysion/sms-library/sms_model/sms_dao/internal"
 )
 
-type SmsSendLog = dao_interface.TIDao[internal.SmsSendLogColumns]
+type SmsSendLogDao = dao_interface.TIDao[internal.SmsSendLogColumns]
 
-func NewSmsSendLog(dao ...dao_interface.IDao) SmsSendLog {
-	return (SmsSendLog)(internal.NewSmsSendLogDao(dao...))
+func NewSmsSendLog(dao ...dao_interface.IDao) SmsSendLogDao {
+	return (SmsSendLogDao)(internal.NewSmsSendLogDao(dao...))
 }
+
+var (
+	SmsSendLog = NewSmsSendLog()
+)

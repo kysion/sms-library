@@ -3,6 +3,8 @@ package internal
 import (
 	"context"
 	"errors"
+	"github.com/kysion/base-library/base_model/base_enum"
+	"github.com/kysion/base-library/utility/enum"
 	"github.com/kysion/sms-library/api/sms_api"
 	"github.com/kysion/sms-library/sms_interface"
 	"github.com/kysion/sms-library/sms_interface/i_controller"
@@ -27,19 +29,43 @@ var Sms = func(modules sms_interface.IModules) i_controller.ISms {
 func (c *SmsController) SendSms(ctx context.Context, req *sms_api.SendSmsReq) (res *sms_api.SmsResponseRes, err error) {
 	ret := &sms_model.SmsResponse{}
 	// 准备平台配置信息
-
-	provider, err := c.modules.SmsServiceProviderConfig().GetProviderByPriority(ctx, 1) // 查找优先级别最高的短信配置
+	provider, err := c.modules.SmsServiceProviderConfig().GetProviderByPriority(ctx, 1) // 查找优先级别最高的短信配置渠道商
 	if err != nil {
 		return nil, errors.New("渠道商配置查询失败")
 	}
 
-	template, err := c.modules.SmsTemplateConfig().GetByProviderNoAndType(ctx, sms_enum.Sms.Type.New(provider.ProviderNo), req.CaptchaType)
-	if err != nil {
+	// 寻找匹配的短信模版
+	template := &sms_model.SmsTemplateConfig{}
+	captchaTypes := enum.GetTypes[int, base_enum.CaptchaType](req.CaptchaType, base_enum.Captcha.Type)
+	for _, value := range captchaTypes {
+		template, err = c.modules.SmsTemplateConfig().GetByProviderNoAndType(ctx, sms_enum.Sms.Type.New(provider.ProviderNo), value.Code())
+		if err != nil {
+			return nil, errors.New("模版查询失败")
+		}
+		if template != nil {
+			isOk := false
+			for _, value2 := range captchaTypes {
+				if template.Type&value2.Code() == value2.Code() {
+					isOk = true
+				} else {
+					isOk = false
+				}
+			}
+			// 找到符合所有业务场景的短信模版 就退出查找
+			if isOk {
+				break
+			}
+		}
+	}
+	if template == nil || err != nil {
 		return nil, errors.New("模版查询失败")
 	}
-	// provider, _ := c.modules.SmsServiceProviderConfig().GetProviderById(ctx, req.ProviderId)
 
-	//template, _ := c.modules.SmsTemplateConfig().GetTemplateById(ctx, req.TemplateId)
+	// TODO 后续删掉：如下场景只适合单一类型的验证码业务场景，不支持复合类型
+	//template, err := c.modules.SmsTemplateConfig().GetByProviderNoAndType(ctx, sms_enum.Sms.Type.New(provider.ProviderNo), req.CaptchaType)
+	//if err != nil {
+	//	return nil, errors.New("模版查询失败")
+	//}
 
 	// 选择对应平台发送短信
 	switch provider.ProviderNo {

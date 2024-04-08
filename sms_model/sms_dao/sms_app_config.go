@@ -9,8 +9,12 @@ import (
 	"github.com/kysion/sms-library/sms_model/sms_dao/internal"
 )
 
-type SmsAppConfig = dao_interface.TIDao[internal.SmsAppConfigColumns]
+type SmsAppConfigDao = dao_interface.TIDao[internal.SmsAppConfigColumns]
 
-func NewSmsAppConfig(dao ...dao_interface.IDao) SmsAppConfig {
-	return (SmsAppConfig)(internal.NewSmsAppConfigDao(dao...))
+func NewSmsAppConfig(dao ...dao_interface.IDao) SmsAppConfigDao {
+	return (SmsAppConfigDao)(internal.NewSmsAppConfigDao(dao...))
 }
+
+var (
+	SmsAppConfig = NewSmsAppConfig()
+)

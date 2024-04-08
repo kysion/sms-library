@@ -10,6 +10,7 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/kysion/base-library/base_model/base_enum"
+	"github.com/kysion/base-library/utility/enum"
 	"github.com/kysion/base-library/utility/json"
 	"github.com/kysion/sms-library/sms_interface"
 	"github.com/kysion/sms-library/sms_model"
@@ -134,9 +135,30 @@ func (s *sSmsAliyun) SendSms(ctx context.Context, provider sms_model.SmsServiceP
 				SignName:    template.SignName,
 			})
 
+			// 一个验证码支持多种业务场景的，那验证码类型就传入复合类型的进来，如：1登录 8找回密码/重置密码，
+			captchaTypes := enum.GetTypes[int, base_enum.CaptchaType](req.CaptchaType, base_enum.Captcha.Type)
+			cacheTimeLen := 5 * len(captchaTypes)
+
+			for _, value := range captchaTypes {
+				// 存储缓存：key = 业务场景 + 邮箱号   register_18170618733@163.com  login_18170618733@163.com
+				cacheKey := value.Description() + "_" + phone
+
+				// 方式1：保持验证码到缓存
+				err = g.DB().GetCache().Set(ctx, cacheKey, req.Params[i], time.Minute*time.Duration(int64(cacheTimeLen)))
+				// 方式2：保持验证码到缓存
+				//_, err = g.Redis().Set(ctx, cacheKey, code)
+				//if err == nil {
+				//_, err = g.Redis().Do(ctx, "EXPIRE", cacheKey, time.Minute*time.Duration(int64(cacheTimeLen)))
+				//}
+				if err != nil {
+					return nil, errors.New("验证码缓存失败")
+				}
+			}
+
+			// TODO：如下方式只能支持单一的验证码校验业务场景
 			// 存储缓存：key = 业务场景 + 手机号   register_18170618700  login_18170618700
-			smsType := base_enum.Captcha.Type.New(req.CaptchaType, "")
-			g.DB().GetCache().Set(ctx, smsType.Description()+"_"+phone, req.Params[i], time.Minute*5)
+			//smsType := base_enum.Captcha.Type.New(req.CaptchaType, "")
+			//g.DB().GetCache().Set(ctx, smsType.Description()+"_"+phone, req.Params[i], time.Minute*5)
 		}
 	} else { // 失败
 		// 遍历所有手机号

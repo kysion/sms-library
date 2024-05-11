@@ -3,7 +3,7 @@ module github.com/kysion/sms-library
 go 1.21
 
 require (
-	github.com/kysion/base-library v0.0.32
+	github.com/kysion/base-library v0.0.33
 	github.com/yitter/idgenerator-go v1.3.3
 )
 
@@ -56,4 +56,4 @@ require (
 
 //replace github.com/SupenBysz/gf-admin-community => ../gf-admin-community
 
-replace github.com/kysion/base-library => ../base-library
+//replace github.com/kysion/base-library => ../base-library

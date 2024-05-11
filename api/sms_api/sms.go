@@ -7,11 +7,11 @@ import (
 
 type SendCaptchaBySmsReq struct {
 	//CaptchaType int `json:"captchaType" v:"required|in:1,2,4,8#验证码类型错误|参路校验失败" dc:"验证码类型：1注册，2登录，4找回用户名/修改用户名，8找回密码/重置密码，16设置手机号码"`
-	CaptchaType int `json:"captchaType" v:"required#参数校验失败" dc:"验证码类型：1注册，2登录，4找回用户名/修改用户名，8找回密码/重置密码，16设置手机号码"`
+	CaptchaType int `json:"captchaType" v:"required#参数校验失败" dc:"验证码类型：1注册，2登录，4找回用户名/修改用户名，8找回密码/重置密码，16设置手机号码，32设置邮箱，64忘记用户名&密码"`
 }
 
 type SendSmsReq struct {
-	CaptchaType int `json:"captchaType" v:"required#参树校验失败" dc:"验证码类型：1注册，2登录，4找回用户名/修改用户名，8找回密码/重置密码"`
+	CaptchaType int `json:"captchaType" v:"required#参数校验失败" dc:"验证码类型：1注册，2登录，4找回用户名/修改用户名，8找回密码/重置密码，16设置手机号码，32设置邮箱，64忘记用户名&密码"`
 
 	sms_model.SmsSendMessageReq // 发送短信数据
 }

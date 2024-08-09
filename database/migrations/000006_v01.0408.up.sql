@@ -1,0 +1,1 @@
+COMMENT ON COLUMN "public"."sms_template_config"."type" IS '业务场景类型：1注册，2登录，4找回用户名/修改用户名，8找回密码/重置密码，16设置手机号码，32设置邮箱，64忘记用户名&密码';

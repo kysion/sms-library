@@ -1,0 +1,1 @@
+ALTER TABLE "public"."sms_business_config" RENAME COLUMN "app_no" TO "app_id";

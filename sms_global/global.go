@@ -22,7 +22,7 @@ var (
 				KeyIndex:         "Sms",
 				I18nName:         "sms",
 				RoutePrefix:      "/sms",
-				StoragePath:      "./resource/sms",
+				StoragePath:      "resource/sms",
 				Identifier: sms_model.Identifier{
 					Sms:                      "sms",
 					SmsSendLog:               "smsSendLog",

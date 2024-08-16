@@ -10,16 +10,16 @@ import (
 
 // SmsBusinessConfig is the golang structure for table sms_business_config.
 type SmsBusinessConfig struct {
-	Id           int64       `json:"id"           description:"ID"`
-	AppId        string      `json:"appId"        description:"应用ID"`
-	BusinessName string      `json:"businessName" description:"业务名称"`
-	BusinessNo   string      `json:"businessNo"   description:"业务编号"`
-	TemplateCode string      `json:"templateCode" description:"模版Code"`
-	BusinessDesc string      `json:"businessDesc" description:"业务说明"`
-	Remark       string      `json:"remark"       description:"备注"`
-	Status       int         `json:"status"       description:"状态: 0禁用 1正常"`
-	UnionMainId  int64       `json:"unionMainId"  description:"所属主体id"`
-	CreatedAt    *gtime.Time `json:"createdAt"    description:""`
-	UpdatedAt    *gtime.Time `json:"updatedAt"    description:""`
-	DeletedAt    *gtime.Time `json:"deletedAt"    description:""`
+	Id           int64       `json:"id"           orm:"id"            description:"ID"`
+	AppId        string      `json:"appId"        orm:"app_id"        description:"应用ID"`
+	BusinessName string      `json:"businessName" orm:"business_name" description:"业务名称"`
+	BusinessNo   string      `json:"businessNo"   orm:"business_no"   description:"业务编号"`
+	TemplateCode string      `json:"templateCode" orm:"template_code" description:"模版Code"`
+	BusinessDesc string      `json:"businessDesc" orm:"business_desc" description:"业务说明"`
+	Remark       string      `json:"remark"       orm:"remark"        description:"备注"`
+	Status       int         `json:"status"       orm:"status"        description:"状态: 0禁用 1正常"`
+	UnionMainId  int64       `json:"unionMainId"  orm:"union_main_id" description:"所属主体id"`
+	CreatedAt    *gtime.Time `json:"createdAt"    orm:"created_at"    description:""`
+	UpdatedAt    *gtime.Time `json:"updatedAt"    orm:"updated_at"    description:""`
+	DeletedAt    *gtime.Time `json:"deletedAt"    orm:"deleted_at"    description:""`
 }

@@ -10,20 +10,20 @@ import (
 
 // SmsSendLog is the golang structure for table sms_send_log.
 type SmsSendLog struct {
-	Id          int64       `json:"id"          description:"ID"`
-	AppId       int64       `json:"appId"       description:"应用ID"`
-	BusinessNo  string      `json:"businessNo"  description:"业务编号"`
-	Fee         int         `json:"fee"         description:"条数"`
-	PhoneNumber string      `json:"phoneNumber" description:"发送手机号"`
-	Message     string      `json:"message"     description:"接口响应消息"`
-	Code        string      `json:"code"        description:"接口响应状态码"`
-	Content     string      `json:"content"     description:"发送内容"`
-	Remark      string      `json:"remark"      description:"备注"`
-	UnionMainId int64       `json:"unionMainId" description:"所属主体id"`
-	Form        int64       `json:"form"        description:"短信来源"`
-	Type        int         `json:"type"        description:"短信类型：1验证、2通知、4业务、8推广"`
-	Status      int         `json:"status"      description:"网关发送状态：0失败、1成功"`
-	MetaData    string      `json:"metaData"    description:"网关返回元数据"`
-	SignName    string      `json:"signName"    description:"签名名称"`
-	CreatedAt   *gtime.Time `json:"createdAt"   description:""`
+	Id          int64       `json:"id"          orm:"id"            description:"ID"`
+	AppId       int64       `json:"appId"       orm:"app_id"        description:"应用ID"`
+	BusinessNo  string      `json:"businessNo"  orm:"business_no"   description:"业务编号"`
+	Fee         int         `json:"fee"         orm:"fee"           description:"条数"`
+	PhoneNumber string      `json:"phoneNumber" orm:"phone_number"  description:"发送手机号"`
+	Message     string      `json:"message"     orm:"message"       description:"接口响应消息"`
+	Code        string      `json:"code"        orm:"code"          description:"接口响应状态码"`
+	Content     string      `json:"content"     orm:"content"       description:"发送内容"`
+	Remark      string      `json:"remark"      orm:"remark"        description:"备注"`
+	UnionMainId int64       `json:"unionMainId" orm:"union_main_id" description:"所属主体id"`
+	Form        int64       `json:"form"        orm:"form"          description:"短信来源"`
+	Type        int         `json:"type"        orm:"type"          description:"短信类型：1验证、2通知、4业务、8推广"`
+	Status      int         `json:"status"      orm:"status"        description:"网关发送状态：0失败、1成功"`
+	MetaData    string      `json:"metaData"    orm:"meta_data"     description:"网关返回元数据"`
+	SignName    string      `json:"signName"    orm:"sign_name"     description:"签名名称"`
+	CreatedAt   *gtime.Time `json:"createdAt"   orm:"created_at"    description:""`
 }

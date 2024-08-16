@@ -10,18 +10,18 @@ import (
 
 // SmsSignConfig is the golang structure for table sms_sign_config.
 type SmsSignConfig struct {
-	Id            int64       `json:"id"            description:"ID"`
-	SignName      string      `json:"signName"      description:"短信签名名称"`
-	ProviderNo    string      `json:"providerNo"    description:"渠道商编号"`
-	ProviderName  string      `json:"providerName"  description:"渠道商名字"`
-	Remark        string      `json:"remark"        description:"备注"`
-	Status        int         `json:"status"        description:"状态: -1不通过 0待审核 1正常"`
-	AuditUserId   int64       `json:"auditUserId"   description:"审核者UserID"`
-	AuditReplyMsg string      `json:"auditReplyMsg" description:"审核回复，仅审核不通过时才有值"`
-	AuditAt       *gtime.Time `json:"auditAt"       description:"审核时间"`
-	ExtJson       string      `json:"extJson"       description:"拓展字段"`
-	UnionMainId   int64       `json:"unionMainId"   description:"关联主体ID"`
-	CreatedAt     *gtime.Time `json:"createdAt"     description:""`
-	UpdatedAt     *gtime.Time `json:"updatedAt"     description:""`
-	DeletedAt     *gtime.Time `json:"deletedAt"     description:""`
+	Id            int64       `json:"id"            orm:"id"              description:"ID"`
+	SignName      string      `json:"signName"      orm:"sign_name"       description:"短信签名名称"`
+	ProviderNo    string      `json:"providerNo"    orm:"provider_no"     description:"渠道商编号"`
+	ProviderName  string      `json:"providerName"  orm:"provider_name"   description:"渠道商名字"`
+	Remark        string      `json:"remark"        orm:"remark"          description:"备注"`
+	Status        int         `json:"status"        orm:"status"          description:"状态: -1不通过 0待审核 1正常"`
+	AuditUserId   int64       `json:"auditUserId"   orm:"audit_user_id"   description:"审核者UserID"`
+	AuditReplyMsg string      `json:"auditReplyMsg" orm:"audit_reply_msg" description:"审核回复，仅审核不通过时才有值"`
+	AuditAt       *gtime.Time `json:"auditAt"       orm:"audit_at"        description:"审核时间"`
+	ExtJson       string      `json:"extJson"       orm:"ext_json"        description:"拓展字段"`
+	UnionMainId   int64       `json:"unionMainId"   orm:"union_main_id"   description:"关联主体ID"`
+	CreatedAt     *gtime.Time `json:"createdAt"     orm:"created_at"      description:""`
+	UpdatedAt     *gtime.Time `json:"updatedAt"     orm:"updated_at"      description:""`
+	DeletedAt     *gtime.Time `json:"deletedAt"     orm:"deleted_at"      description:""`
 }

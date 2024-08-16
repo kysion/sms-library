@@ -14,7 +14,7 @@ gfcli:
   gen:
     dao:
       - link: "pgsql:user=username password=password host=127.0.0.1 port=5432 dbname=dn_name sslmode=disable"
-        tables: "oss_app_config, oss_bucket_config, oss_service_provider_config "
+        tables: "sms_service_provider_config, sms_template_config, sms_sign_config, sms_business_config, sms_app_config, sms_send_log"
 
         daoPath: "../sms_model/sms_dao"
         doPath: "../sms_model/sms_do"

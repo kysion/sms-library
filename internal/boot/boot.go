@@ -9,12 +9,8 @@ import (
 
 // InitPermission 初始化权限树，需要先初始化完成 base_permission.Factory
 func InitPermission(module sms_interface.IModules, permission base_permission.IPermission) []base_permission.IPermission {
-	if base_permission.Factory == nil {
-		return nil
-	}
-
 	if permission == nil {
-		permission = base_permission.Factory()
+		permission = base_permission.NewInIdentifier(module.GetConfig().Identifier.Sms, module.T(context.TODO(), "{#SmsName}"), "")
 	}
 
 	result := []base_permission.IPermission{

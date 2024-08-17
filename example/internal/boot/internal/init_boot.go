@@ -3,6 +3,8 @@ package internal
 import (
 	"context"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/kysion/base-library/utility/base_permission"
+	"github.com/kysion/sms-library/example/model"
 	"github.com/yitter/idgenerator-go/idgen"
 )
 
@@ -22,4 +24,11 @@ func init() {
 	// ...... 其它参数设置参考 IdGeneratorOptions 定义，一般来说，只要再设置 WorkerIdBitLength （决定 WorkerId 的最大值）。
 	// 保存参数（必须的操作，否则以上设置都不能生效）：
 	idgen.SetIdGenerator(options)
+
+	base_permission.InitializePermissionFactory(func() base_permission.IPermission {
+		return &model.PermissionTree{
+			Permission: &model.Permission{},
+			Children:   nil,
+		}
+	})
 }

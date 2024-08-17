@@ -8,6 +8,8 @@ import (
 	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/kysion/sms-library/example/router"
 	"github.com/kysion/sms-library/sms_global"
+
+	_ "github.com/kysion/sms-library/example/internal/boot/internal"
 )
 
 var (

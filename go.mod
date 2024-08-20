@@ -3,7 +3,7 @@ module github.com/kysion/sms-library
 go 1.21
 
 require (
-	github.com/kysion/base-library v0.1.3
+	github.com/kysion/base-library v0.1.4
 	github.com/yitter/idgenerator-go v1.3.3
 )
 

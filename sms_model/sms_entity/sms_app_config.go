@@ -10,15 +10,15 @@ import (
 
 // SmsAppConfig is the golang structure for table sms_app_config.
 type SmsAppConfig struct {
-	Id              int64       `json:"id"              description:"ID"`
-	AppName         string      `json:"appName"         description:"应用名称"`
-	AvailableNumber int         `json:"availableNumber" description:"可用数量"`
-	TotalNumber     int         `json:"totalNumber"     description:"总条数"`
-	UseNumber       int         `json:"useNumber"       description:"已用数量"`
-	Remark          string      `json:"remark"          description:"备注"`
-	Status          int         `json:"status"          description:"状态: 0禁用 1正常"`
-	UnionMainId     int64       `json:"unionMainId"     description:"所属主体id"`
-	CreatedAt       *gtime.Time `json:"createdAt"       description:""`
-	UpdatedAt       *gtime.Time `json:"updatedAt"       description:""`
-	DeletedAt       *gtime.Time `json:"deletedAt"       description:""`
+	Id              int64       `json:"id"              orm:"id"               description:"ID"`
+	AppName         string      `json:"appName"         orm:"app_name"         description:"应用名称"`
+	AvailableNumber int         `json:"availableNumber" orm:"available_number" description:"可用数量"`
+	TotalNumber     int         `json:"totalNumber"     orm:"total_number"     description:"总条数"`
+	UseNumber       int         `json:"useNumber"       orm:"use_number"       description:"已用数量"`
+	Remark          string      `json:"remark"          orm:"remark"           description:"备注"`
+	Status          int         `json:"status"          orm:"status"           description:"状态: 0禁用 1正常"`
+	UnionMainId     int64       `json:"unionMainId"     orm:"union_main_id"    description:"所属主体id"`
+	CreatedAt       *gtime.Time `json:"createdAt"       orm:"created_at"       description:""`
+	UpdatedAt       *gtime.Time `json:"updatedAt"       orm:"updated_at"       description:""`
+	DeletedAt       *gtime.Time `json:"deletedAt"       orm:"deleted_at"       description:""`
 }

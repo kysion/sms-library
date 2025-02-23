@@ -3,6 +3,8 @@ package sms_module
 import (
 	"context"
 	"github.com/gogf/gf/v2/i18n/gi18n"
+	"github.com/kysion/base-library/utility/base_permission"
+	"github.com/kysion/sms-library/example/model"
 	"github.com/kysion/sms-library/internal/boot"
 	"github.com/kysion/sms-library/internal/logic/sms"
 	"github.com/kysion/sms-library/internal/logic/sms_aliyun"
@@ -115,6 +117,12 @@ func NewModules(
 	module.smsTencent = sms_tencent.NewSmsTencent(module)
 	module.smsQyxs = sms_qyxs.NewSmsQyxs(module)
 
+	base_permission.InitializePermissionFactory(func() base_permission.IPermission {
+		return &model.PermissionTree{
+			Permission: &model.Permission{},
+			Children:   nil,
+		}
+	})
 	// 权限树追加权限
 	sms_consts.PermissionTree = append(sms_consts.PermissionTree, boot.InitPermission(module, nil)...)
 

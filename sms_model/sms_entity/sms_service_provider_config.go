@@ -10,20 +10,20 @@ import (
 
 // SmsServiceProviderConfig is the golang structure for table sms_service_provider_config.
 type SmsServiceProviderConfig struct {
-	Id              int64       `json:"id"              description:"渠道商id"`
-	ProviderNo      string      `json:"providerNo"      description:"渠道商编号"`
-	ProviderName    string      `json:"providerName"    description:"渠道商名字"`
-	AccessKeyId     string      `json:"accessKeyId"     description:"身份标识"`
-	AccessKeySecret string      `json:"accessKeySecret" description:"身份认证密钥"`
-	Endpoint        string      `json:"endpoint"        description:"域名调用"`
-	SdkAppId        string      `json:"sdkAppId"        description:"应用id"`
-	Region          string      `json:"region"          description:"地域"`
-	Remark          string      `json:"remark"          description:"备注"`
-	Status          int         `json:"status"          description:"状态: 0禁用 1正常"`
-	ExtJson         string      `json:"extJson"         description:"拓展字段"`
-	CreatedAt       *gtime.Time `json:"createdAt"       description:""`
-	UpdatedAt       *gtime.Time `json:"updatedAt"       description:""`
-	DeletedAt       *gtime.Time `json:"deletedAt"       description:""`
-	Priority        int         `json:"priority"        description:"优先级，使用默认选择优先级最高的"`
-	IsDefault       bool        `json:"isDefault"       description:"是否默认：true是、false否 ，默认false"`
+	Id              int64       `json:"id"              orm:"id"                description:"渠道商id"`
+	ProviderNo      string      `json:"providerNo"      orm:"provider_no"       description:"渠道商编号"`
+	ProviderName    string      `json:"providerName"    orm:"provider_name"     description:"渠道商名字"`
+	AccessKeyId     string      `json:"accessKeyId"     orm:"access_key_id"     description:"身份标识"`
+	AccessKeySecret string      `json:"accessKeySecret" orm:"access_key_secret" description:"身份认证密钥"`
+	Endpoint        string      `json:"endpoint"        orm:"endpoint"          description:"域名调用"`
+	SdkAppId        string      `json:"sdkAppId"        orm:"sdk_app_id"        description:"应用id"`
+	Region          string      `json:"region"          orm:"region"            description:"地域"`
+	Remark          string      `json:"remark"          orm:"remark"            description:"备注"`
+	Status          int         `json:"status"          orm:"status"            description:"状态: 0禁用 1正常"`
+	ExtJson         string      `json:"extJson"         orm:"ext_json"          description:"拓展字段"`
+	CreatedAt       *gtime.Time `json:"createdAt"       orm:"created_at"        description:""`
+	UpdatedAt       *gtime.Time `json:"updatedAt"       orm:"updated_at"        description:""`
+	DeletedAt       *gtime.Time `json:"deletedAt"       orm:"deleted_at"        description:""`
+	Priority        int         `json:"priority"        orm:"priority"          description:"优先级，使用默认选择优先级最高的"`
+	IsDefault       bool        `json:"isDefault"       orm:"is_default"        description:"是否默认：true是、false否 ，默认false"`
 }

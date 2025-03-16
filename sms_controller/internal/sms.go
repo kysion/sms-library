@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 	"errors"
+
 	"github.com/kysion/base-library/base_model/base_enum"
 	"github.com/kysion/base-library/utility/enum"
 	"github.com/kysion/sms-library/api/sms_api"
@@ -31,7 +32,7 @@ func (c *SmsController) SendSms(ctx context.Context, req *sms_api.SendSmsReq) (r
 	// 准备平台配置信息
 	provider, err := c.modules.SmsServiceProviderConfig().GetProviderByPriority(ctx, 1) // 查找优先级别最高的短信配置渠道商
 	if err != nil {
-		return nil, errors.New("渠道商配置查询失败")
+		return nil, errors.New("{#error_sms_controller_provider_config_query_failed}")
 	}
 
 	// 寻找匹配的短信模版
@@ -40,7 +41,7 @@ func (c *SmsController) SendSms(ctx context.Context, req *sms_api.SendSmsReq) (r
 	for _, value := range captchaTypes {
 		template, err = c.modules.SmsTemplateConfig().GetByProviderNoAndType(ctx, sms_enum.Sms.Type.New(provider.ProviderNo), value.Code())
 		if err != nil {
-			return nil, errors.New("模版查询失败")
+			return nil, errors.New("{#error_sms_controller_template_query_failed}")
 		}
 		if template != nil {
 			isOk := false
@@ -58,13 +59,13 @@ func (c *SmsController) SendSms(ctx context.Context, req *sms_api.SendSmsReq) (r
 		}
 	}
 	if template == nil || err != nil {
-		return nil, errors.New("模版查询失败")
+		return nil, errors.New("{#error_sms_controller_template_query_failed}")
 	}
 
 	// TODO 后续删掉：如下场景只适合单一类型的验证码业务场景，不支持复合类型
 	//template, err := c.modules.SmsTemplateConfig().GetByProviderNoAndType(ctx, sms_enum.Sms.Type.New(provider.ProviderNo), req.CaptchaType)
 	//if err != nil {
-	//	return nil, errors.New("模版查询失败")
+	//	return nil, errors.New("{#error_sms_controller_template_query_failed}")
 	//}
 
 	// 选择对应平台发送短信
@@ -116,7 +117,7 @@ func (c *SmsController) ReceiveSms(ctx context.Context, req *sms_api.ReceiveSmsR
 		ret, err = c.modules.SmsQyxs().ReceiveSms(ctx, req.SmsReceiveSmsReq)
 
 	default:
-		return false, errors.New("抱歉，暂不支持此渠道商！")
+		return false, errors.New("{#error_sms_controller_not_supported_this_provider}")
 	}
 
 	return ret == true, err
@@ -179,7 +180,7 @@ func (c *SmsController) RegisterTemplate(ctx context.Context, req *sms_api.Regis
 		ret, err = c.modules.SmsQyxs().RegisterTemplate(ctx, &req.SmsTemplateConfig)
 
 	default:
-		return nil, errors.New("抱歉，暂不支持此渠道商！")
+		return nil, errors.New("{#error_sms_controller_not_supported_this_provider}")
 	}
 
 	//ret, err := c.modules.SmsSignConfig().CreateSign(ctx, &req.SmsSignConfig)
@@ -226,7 +227,7 @@ func (c *SmsController) RegisterSign(ctx context.Context, req *sms_api.RegisterS
 		ret, err = c.modules.SmsQyxs().RegisterSign(ctx, &req.SmsSignConfig)
 
 	default:
-		return nil, errors.New("抱歉，暂不支持此渠道商！")
+		return nil, errors.New("{#error_sms_controller_not_supported_this_provider}")
 	}
 
 	//ret, err := c.modules.SmsSignConfig().CreateSign(ctx, &req.SmsSignConfig)
@@ -277,7 +278,7 @@ func (c *SmsController) CreateProvider(ctx context.Context, req *sms_api.CreateP
 		c.modules.SmsQyxs().CreateProvider(ctx, &req.SmsServiceProviderConfig)
 
 	default:
-		return nil, errors.New("抱歉，暂不支持此渠道商！")
+		return nil, errors.New("{#error_sms_controller_not_supported_this_provider}")
 	}
 
 	//ret, err := c.modules.SmsServiceProviderConfig().CreateProvider(ctx, &req.SmsServiceProviderConfig)

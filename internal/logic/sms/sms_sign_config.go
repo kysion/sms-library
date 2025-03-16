@@ -3,6 +3,7 @@ package sms
 import (
 	"context"
 	"errors"
+
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/kysion/sms-library/sms_interface"
 	"github.com/kysion/sms-library/sms_model"
@@ -40,7 +41,7 @@ func (s *sSignConfig) CreateSign(ctx context.Context, info *sms_model.SmsSignCon
 	}).Count()
 
 	if err != nil || count > 0 {
-		return nil, errors.New("该签名在此渠道商已经存在" + s.dao.SmsSignConfig.Table())
+		return nil, errors.New("{#error_sms_sign_config_signature_exists}" + s.dao.SmsSignConfig.Table())
 	}
 
 	// 添加短信签名
@@ -60,7 +61,7 @@ func (s *sSignConfig) CreateSign(ctx context.Context, info *sms_model.SmsSignCon
 	_, err = s.dao.SmsSignConfig.Ctx(ctx).OmitNilData().Insert(data)
 
 	if err != nil {
-		return nil, errors.New("短信签名添加失败" + s.dao.SmsSignConfig.Table())
+		return nil, errors.New("{#error_sms_sign_config_add_failed}" + s.dao.SmsSignConfig.Table())
 	}
 
 	return s.GetSignById(ctx, gconv.Int64(data.Id))
@@ -70,19 +71,19 @@ func (s *sSignConfig) CreateSign(ctx context.Context, info *sms_model.SmsSignCon
 func (s *sSignConfig) AuditSign(ctx context.Context, id int64, info *sms_model.AuditInfo) (bool, error) {
 	// 判断审核行为，只能是审核通过或者不通过 -1不通过 1通过
 	if info.State != sms_enum.Sms.State.Reject.Code() && info.State != sms_enum.Sms.State.Approve.Code() {
-		return false, errors.New("审核行为类型错误" + s.dao.SmsSignConfig.Table())
+		return false, errors.New("{#error_sms_sign_config_audit_action_error}" + s.dao.SmsSignConfig.Table())
 	}
 
 	// 审核不通过需要有原因
 
 	if info.State == sms_enum.Sms.State.Reject.Code() && info.ReplyMsg == "" {
-		return false, errors.New("审核不通过时必须说明原因" + s.dao.SmsSignConfig.Table())
+		return false, errors.New("{#error_sms_sign_config_audit_reason_required}" + s.dao.SmsSignConfig.Table())
 	}
 
 	// 判断签名是否存在
 	sign, err := s.GetSignById(ctx, id)
 	if err != nil || sign == nil {
-		return false, errors.New("短信签名不存在" + s.dao.SmsSignConfig.Table())
+		return false, errors.New("{#error_sms_sign_config_not_exists}" + s.dao.SmsSignConfig.Table())
 	}
 
 	// 改变状态为正常代表审核成功
@@ -96,7 +97,7 @@ func (s *sSignConfig) AuditSign(ctx context.Context, id int64, info *sms_model.A
 	}).Update()
 
 	if err != nil {
-		return false, errors.New("短信签名审核失败" + s.dao.SmsSignConfig.Table())
+		return false, errors.New("{#error_sms_sign_config_audit_failed}" + s.dao.SmsSignConfig.Table())
 	}
 
 	return true, nil
@@ -109,7 +110,7 @@ func (s *sSignConfig) GetSignBySignName(ctx context.Context, signName string) (r
 	}).Scan(&res)
 
 	if err != nil {
-		return nil, errors.New("该签名不存在" + s.dao.SmsSignConfig.Table())
+		return nil, errors.New("{#error_sms_sign_config_signature_not_exists}" + s.dao.SmsSignConfig.Table())
 	}
 	return res, nil
 }
@@ -117,7 +118,7 @@ func (s *sSignConfig) GetSignBySignName(ctx context.Context, signName string) (r
 // GetSignById 根据id查找签名数据
 func (s *sSignConfig) GetSignById(ctx context.Context, id int64) (*sms_model.SmsSignConfig, error) {
 	if id == 0 {
-		return nil, errors.New("签名id不能为空" + s.dao.SmsSignConfig.Table())
+		return nil, errors.New("{#error_sms_sign_config_id_empty}" + s.dao.SmsSignConfig.Table())
 	}
 
 	result, err := daoctl.GetByIdWithError[*sms_model.SmsSignConfig](s.dao.SmsSignConfig.Ctx(ctx), id)

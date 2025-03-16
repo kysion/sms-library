@@ -3,6 +3,7 @@ package sms
 import (
 	"context"
 	"errors"
+
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/kysion/base-library/utility/daoctl"
@@ -47,7 +48,7 @@ func (s *sTemplateConfig) CreateTemplate(ctx context.Context, info *sms_model.Sm
 	_, err := s.dao.SmsTemplateConfig.Ctx(ctx).OmitNilData().Insert(data)
 
 	if err != nil {
-		return nil, errors.New("短信模板添加失败" + s.dao.SmsTemplateConfig.Table())
+		return nil, errors.New("{#error_sms_template_config_add_failed}" + s.dao.SmsTemplateConfig.Table())
 	}
 
 	return s.GetTemplateById(ctx, gconv.Int64(data.Id))
@@ -57,18 +58,18 @@ func (s *sTemplateConfig) CreateTemplate(ctx context.Context, info *sms_model.Sm
 func (s *sTemplateConfig) AuditTemplate(ctx context.Context, id int64, info *sms_model.AuditInfo) (bool, error) {
 	// 判断审核行为，只能是审核通过或者不通过 -1不通过 1通过
 	if info.State != sms_enum.Sms.State.Reject.Code() && info.State != sms_enum.Sms.State.Approve.Code() {
-		return false, errors.New("审核行为类型错误" + s.dao.SmsTemplateConfig.Table())
+		return false, errors.New("{#error_sms_template_config_audit_action_error}" + s.dao.SmsTemplateConfig.Table())
 	}
 
 	// 审核不通过需要有原因
 	if info.State == sms_enum.Sms.State.Reject.Code() && info.ReplyMsg == "" {
-		return false, errors.New("审核不通过时必须说明原因" + s.dao.SmsTemplateConfig.Table())
+		return false, errors.New("{#error_sms_template_config_audit_reason_required}" + s.dao.SmsTemplateConfig.Table())
 	}
 
 	// 判断模版是否存在
 	template, err := daoctl.GetByIdWithError[sms_entity.SmsTemplateConfig](s.dao.SmsTemplateConfig.Ctx(ctx), id)
 	if err != nil || template == nil {
-		return false, errors.New("短信签名不存在" + s.dao.SmsSignConfig.Table())
+		return false, errors.New("{#error_sms_template_config_signature_not_exists}" + s.dao.SmsSignConfig.Table())
 	}
 
 	// 改变状态为正常代表审核成功
@@ -82,7 +83,7 @@ func (s *sTemplateConfig) AuditTemplate(ctx context.Context, id int64, info *sms
 	}).Update()
 
 	if err != nil {
-		return false, errors.New("短信签名审核失败：" + err.Error() + s.dao.SmsTemplateConfig.Table())
+		return false, errors.New("{#error_sms_template_config_audit_failed}: " + err.Error() + s.dao.SmsTemplateConfig.Table())
 	}
 
 	return true, nil
@@ -91,14 +92,14 @@ func (s *sTemplateConfig) AuditTemplate(ctx context.Context, id int64, info *sms
 // GetByTemplateCode 根据模版编号查询模版信息
 func (s *sTemplateConfig) GetByTemplateCode(ctx context.Context, templateCode string) (*sms_model.SmsTemplateConfig, error) {
 	if templateCode == "" {
-		return nil, errors.New("模版编号不能为空" + s.dao.SmsTemplateConfig.Table())
+		return nil, errors.New("{#error_sms_template_config_code_empty}" + s.dao.SmsTemplateConfig.Table())
 	}
 
 	data := sms_entity.SmsTemplateConfig{}
 
 	err := s.dao.SmsTemplateConfig.Ctx(ctx).Where(sms_do.SmsTemplateConfig{TemplateCode: templateCode}).Scan(&data)
 	if err != nil {
-		return nil, errors.New("根据模版编号获取模版信息失败：" + err.Error() + s.dao.SmsTemplateConfig.Table())
+		return nil, errors.New("{#error_sms_template_config_get_by_code_failed}: " + err.Error() + s.dao.SmsTemplateConfig.Table())
 	}
 
 	result := kconv.Struct[*sms_model.SmsTemplateConfig](data, &sms_model.SmsTemplateConfig{})
@@ -109,14 +110,14 @@ func (s *sTemplateConfig) GetByTemplateCode(ctx context.Context, templateCode st
 // GetTemplateById 根据ID获取模版
 func (s *sTemplateConfig) GetTemplateById(ctx context.Context, id int64) (*sms_model.SmsTemplateConfig, error) {
 	if id == 0 {
-		return nil, errors.New("模板id不能为空" + s.dao.SmsTemplateConfig.Table())
+		return nil, errors.New("{#error_sms_template_config_id_empty}" + s.dao.SmsTemplateConfig.Table())
 	}
 
 	data := sms_entity.SmsTemplateConfig{}
 
 	err := s.dao.SmsTemplateConfig.Ctx(ctx).Where(sms_do.SmsTemplateConfig{Id: id}).Scan(&data)
 	if err != nil {
-		return nil, errors.New("根据id获取渠道商信息失败：" + err.Error() + s.dao.SmsTemplateConfig.Table())
+		return nil, errors.New("{#error_sms_template_config_get_by_id_failed}: " + err.Error() + s.dao.SmsTemplateConfig.Table())
 	}
 
 	res := kconv.Struct[*sms_model.SmsTemplateConfig](data, &sms_model.SmsTemplateConfig{})
@@ -127,11 +128,11 @@ func (s *sTemplateConfig) GetTemplateById(ctx context.Context, id int64) (*sms_m
 // GetByProviderNoAndType 根据业务场景及渠道获取模版
 func (s *sTemplateConfig) GetByProviderNoAndType(ctx context.Context, providerNo sms_enum.SmsType, smsType int) (*sms_model.SmsTemplateConfig, error) {
 	if providerNo.Code() == "" {
-		return nil, errors.New("渠道编号不能为空" + s.dao.SmsTemplateConfig.Table())
+		return nil, errors.New("{#error_sms_template_config_provider_no_empty}" + s.dao.SmsTemplateConfig.Table())
 	}
 
 	if smsType == 0 {
-		return nil, errors.New("请指定业务场景" + s.dao.SmsTemplateConfig.Table())
+		return nil, errors.New("{#error_sms_template_config_scene_required}" + s.dao.SmsTemplateConfig.Table())
 	}
 
 	data := sms_entity.SmsTemplateConfig{}
@@ -144,7 +145,7 @@ func (s *sTemplateConfig) GetByProviderNoAndType(ctx context.Context, providerNo
 	err := model.Scan(&data)
 
 	if err != nil {
-		return nil, errors.New("获取渠道商信息失败：" + err.Error() + s.dao.SmsTemplateConfig.Table())
+		return nil, errors.New("{#error_sms_template_config_get_provider_failed}: " + err.Error() + s.dao.SmsTemplateConfig.Table())
 	}
 
 	res := kconv.Struct[*sms_model.SmsTemplateConfig](data, &sms_model.SmsTemplateConfig{})

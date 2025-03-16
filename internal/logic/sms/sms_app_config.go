@@ -3,6 +3,7 @@ package sms
 import (
 	"context"
 	"errors"
+
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/kysion/base-library/utility/daoctl"
 	"github.com/kysion/base-library/utility/kconv"
@@ -31,7 +32,7 @@ func NewSmsAppConfig(modules sms_interface.IModules) sms_interface.ISmsAppConfig
 func (s *sAppConfig) GetAppConfigByName(ctx context.Context, appName string) (*sms_model.SmsAppConfig, error) {
 	if appName == "" {
 		table := s.modules.Dao().SmsAppConfig.Table()
-		return nil, errors.New("应用名称不能为空" + table)
+		return nil, errors.New("{#error_sms_app_config_name_empty}" + table)
 
 	}
 
@@ -39,7 +40,7 @@ func (s *sAppConfig) GetAppConfigByName(ctx context.Context, appName string) (*s
 
 	err := s.modules.Dao().SmsAppConfig.Ctx(ctx).Where(sms_do.SmsAppConfig{AppName: appName}).Scan(&data)
 	if err != nil {
-		return nil, errors.New("根据应用名称获取应用信息失败" + s.dao.SmsAppConfig.Table())
+		return nil, errors.New("{#error_sms_app_config_get_by_name_failed}" + s.dao.SmsAppConfig.Table())
 	}
 
 	res := kconv.Struct[*sms_model.SmsAppConfig](data, &sms_model.SmsAppConfig{})
@@ -50,7 +51,7 @@ func (s *sAppConfig) GetAppConfigByName(ctx context.Context, appName string) (*s
 // GetAppConfigById 根据id获取AppConfig
 func (s *sAppConfig) GetAppConfigById(ctx context.Context, id int64) (*sms_model.SmsAppConfig, error) {
 	if id == 0 {
-		return nil, errors.New("应用id不能为空" + s.dao.SmsAppConfig.Table())
+		return nil, errors.New("{#error_sms_app_config_id_empty}" + s.dao.SmsAppConfig.Table())
 
 	}
 
@@ -58,7 +59,7 @@ func (s *sAppConfig) GetAppConfigById(ctx context.Context, id int64) (*sms_model
 
 	err := s.dao.SmsAppConfig.Ctx(ctx).Where(sms_do.SmsAppConfig{Id: id}).Scan(&data)
 	if err != nil {
-		return nil, errors.New("根据应用id获取应用信息失败" + s.dao.SmsAppConfig.Table())
+		return nil, errors.New("{#error_sms_app_config_get_by_id_failed}" + s.dao.SmsAppConfig.Table())
 	}
 
 	res := kconv.Struct[*sms_model.SmsAppConfig](data, &sms_model.SmsAppConfig{})
@@ -69,14 +70,14 @@ func (s *sAppConfig) GetAppConfigById(ctx context.Context, id int64) (*sms_model
 // GetAppAvailableNumber 账户用量统计 (上下文, 应用id) (当前应用剩余短信数量)
 func (s *sAppConfig) GetAppAvailableNumber(ctx context.Context, id int64) (int, error) {
 	if id == 0 {
-		return 0, errors.New("应用id不能为空" + s.dao.SmsAppConfig.Table())
+		return 0, errors.New("{#error_sms_app_config_id_empty}" + s.dao.SmsAppConfig.Table())
 	}
 
 	data := sms_entity.SmsAppConfig{}
 
 	err := s.dao.SmsAppConfig.Ctx(ctx).Where(sms_do.SmsAppConfig{Id: id}).Scan(&data)
 	if err != nil {
-		return 0, errors.New("根据应用id获取应用信息失败" + s.dao.SmsAppConfig.Table())
+		return 0, errors.New("{#error_sms_app_config_get_by_id_failed}" + s.dao.SmsAppConfig.Table())
 	}
 
 	return data.AvailableNumber, nil
@@ -90,7 +91,7 @@ func (s *sAppConfig) CreateAppConfig(ctx context.Context, config *sms_model.SmsA
 	}).Count()
 
 	if count > 0 {
-		return false, errors.New("应用名称重复" + s.dao.SmsAppConfig.Table())
+		return false, errors.New("{#error_sms_app_config_name_duplicate}" + s.dao.SmsAppConfig.Table())
 	}
 
 	// 生成id
@@ -102,7 +103,7 @@ func (s *sAppConfig) CreateAppConfig(ctx context.Context, config *sms_model.SmsA
 
 	_, err := s.dao.SmsAppConfig.Ctx(ctx).Insert(appConfig)
 	if err != nil {
-		return false, errors.New("短信应用创建失败" + s.dao.SmsAppConfig.Table())
+		return false, errors.New("{#error_sms_app_config_create_failed}" + s.dao.SmsAppConfig.Table())
 	}
 
 	return true, nil
@@ -111,7 +112,7 @@ func (s *sAppConfig) CreateAppConfig(ctx context.Context, config *sms_model.SmsA
 // UpdateAppNumber 更新应用使用数量 (上下文, 应用编号, 花费数量)
 func (s *sAppConfig) UpdateAppNumber(ctx context.Context, id int64, fee uint64) (bool, error) {
 	if id == 0 {
-		return false, errors.New("应用id不能为空" + s.dao.SmsAppConfig.Table())
+		return false, errors.New("{#error_sms_app_config_id_empty}" + s.dao.SmsAppConfig.Table())
 	}
 
 	// 获取原来的数量

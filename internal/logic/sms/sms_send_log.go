@@ -3,6 +3,7 @@ package sms
 import (
 	"context"
 	"errors"
+
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/kysion/sms-library/sms_interface"
 	"github.com/kysion/sms-library/sms_model"
@@ -27,15 +28,15 @@ func NewSmsSendLogConfig(modules sms_interface.IModules) sms_interface.ISmsSendL
 // SaveSmsLog 记录日志
 func (s *sSendLogConfig) SaveSmsLog(ctx context.Context, info *sms_model.SmsSendLog) (bool, error) {
 	if info.PhoneNumber == "" {
-		return false, errors.New("发送手机号不能为空" + s.dao.SmsSendLog.Table())
+		return false, errors.New("{#error_sms_send_log_mobile_empty}" + s.dao.SmsSendLog.Table())
 	}
 
 	if info.SignName == "" {
-		return false, errors.New("签名名称不能为空" + s.dao.SmsSendLog.Table())
+		return false, errors.New("{#error_sms_send_log_sign_name_empty}" + s.dao.SmsSendLog.Table())
 	}
 
 	if info.Type == 0 {
-		return false, errors.New("短信类型不能为空" + s.dao.SmsSendLog.Table())
+		return false, errors.New("{#error_sms_send_log_type_empty}" + s.dao.SmsSendLog.Table())
 	}
 
 	data := sms_do.SmsSendLog{}
@@ -44,7 +45,7 @@ func (s *sSendLogConfig) SaveSmsLog(ctx context.Context, info *sms_model.SmsSend
 
 	_, err := s.dao.SmsSendLog.Ctx(ctx).Insert(data)
 	if err != nil {
-		return false, errors.New("短信日志写入失败：" + err.Error() + s.dao.SmsSendLog.Table())
+		return false, errors.New("{#error_sms_send_log_write_failed}: " + err.Error() + s.dao.SmsSendLog.Table())
 	}
 
 	return true, nil
@@ -57,7 +58,7 @@ func (s *sSendLogConfig) GetSmsLogById(ctx context.Context, id int64) (res *sms_
 	}).Scan(&res)
 
 	if err != nil {
-		return nil, errors.New("根据id查询日志失败：" + err.Error() + s.dao.SmsSendLog.Table())
+		return nil, errors.New("{#error_sms_send_log_query_by_id_failed}: " + err.Error() + s.dao.SmsSendLog.Table())
 	}
 
 	return res, nil

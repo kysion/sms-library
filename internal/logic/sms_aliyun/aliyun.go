@@ -4,6 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math/rand"
+	"regexp"
+	"strings"
+	"time"
+
 	openapi "github.com/alibabacloud-go/darabonba-openapi/client"
 	dysmsapi20170525 "github.com/alibabacloud-go/dysmsapi-20170525/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
@@ -16,10 +21,6 @@ import (
 	"github.com/kysion/sms-library/sms_model"
 	"github.com/kysion/sms-library/sms_model/sms_dao"
 	"github.com/kysion/sms-library/sms_model/sms_enum"
-	"math/rand"
-	"regexp"
-	"strings"
-	"time"
 )
 
 // SmsAliyun 阿里云短信平台
@@ -151,7 +152,7 @@ func (s *sSmsAliyun) SendSms(ctx context.Context, provider sms_model.SmsServiceP
 				//_, err = g.Redis().Do(ctx, "EXPIRE", cacheKey, time.Minute*time.Duration(int64(cacheTimeLen)))
 				//}
 				if err != nil {
-					return nil, errors.New("验证码缓存失败")
+					return nil, errors.New("{#error_sms_aliyun_captcha_cache_failed}")
 				}
 			}
 
@@ -230,7 +231,10 @@ func (s *sSmsAliyun) createClient(accessKeyId *string, accessKeySecret *string) 
 	// 创建客户端并返回
 	client := &dysmsapi20170525.Client{}
 	client, err = dysmsapi20170525.NewClient(config)
-	return client, err
+	if err != nil {
+		return nil, errors.New("{#error_sms_aliyun_client_creation_failed}")
+	}
+	return client, nil
 }
 
 // ReceiveSms 接收短信 (上下文, 短信请求体) (bool,err)
@@ -246,7 +250,7 @@ func (s *sSmsAliyun) ReceiveSms(ctx context.Context, req sms_model.SmsReceiveSms
 	case sms_enum.Sms.Action.TopUp.Code(): // 充值
 
 	default:
-		return false, errors.New("暂不支持此业务类型")
+		return false, errors.New("{#error_sms_aliyun_business_type_not_supported}")
 	}
 
 	return true, nil

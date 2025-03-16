@@ -3,6 +3,7 @@ package sms
 import (
 	"context"
 	"errors"
+
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/kysion/base-library/utility/kconv"
 	"github.com/kysion/sms-library/sms_interface"
@@ -30,14 +31,14 @@ func NewSmsBusinessConfig(modules sms_interface.IModules) sms_interface.ISmsBusi
 // GetBusinessConfigById 根据id获取BusinessConfig
 func (s *sBusinessConfig) GetBusinessConfigById(ctx context.Context, id int64) (*sms_model.SmsBusinessConfig, error) {
 	if id == 0 {
-		return nil, errors.New("业务id不能为空" + s.modules.Dao().SmsBusinessConfig.Table())
+		return nil, errors.New("{#error_sms_business_config_id_empty}" + s.modules.Dao().SmsBusinessConfig.Table())
 	}
 
 	data := sms_entity.SmsBusinessConfig{}
 
 	err := s.dao.SmsBusinessConfig.Ctx(ctx).Where(sms_do.SmsBusinessConfig{Id: id}).Scan(&data)
 	if err != nil {
-		return nil, errors.New("根据业务id获取业务信息失败：" + err.Error() + s.dao.SmsBusinessConfig.Table())
+		return nil, errors.New("{#error_sms_business_config_get_by_id_failed}: " + err.Error() + s.dao.SmsBusinessConfig.Table())
 	}
 
 	res := kconv.Struct[*sms_model.SmsBusinessConfig](data, &sms_model.SmsBusinessConfig{})
@@ -53,7 +54,7 @@ func (s *sBusinessConfig) CreateBusinessConfig(ctx context.Context, config *sms_
 	}).Count()
 
 	if count > 0 {
-		return nil, errors.New("业务名称重复" + s.dao.SmsBusinessConfig.Table())
+		return nil, errors.New("{#error_sms_business_config_name_duplicate}" + s.dao.SmsBusinessConfig.Table())
 	}
 
 	// 生成id
@@ -65,7 +66,7 @@ func (s *sBusinessConfig) CreateBusinessConfig(ctx context.Context, config *sms_
 
 	_, err := s.dao.SmsBusinessConfig.Ctx(ctx).Insert(appConfig)
 	if err != nil {
-		return nil, errors.New("短信业务创建失败" + s.dao.SmsBusinessConfig.Table())
+		return nil, errors.New("{#error_sms_business_config_create_failed}" + s.dao.SmsBusinessConfig.Table())
 	}
 
 	return s.GetBusinessConfigById(ctx, gconv.Int64(appConfig.Id))
@@ -74,14 +75,14 @@ func (s *sBusinessConfig) CreateBusinessConfig(ctx context.Context, config *sms_
 // GetBusinessConfigByAppId 根据应用id获取BusinessConfig
 func (s *sBusinessConfig) GetBusinessConfigByAppId(ctx context.Context, id int64) (*sms_model.SmsBusinessConfig, error) {
 	if id == 0 {
-		return nil, errors.New("应用id不能为空" + s.modules.Dao().SmsBusinessConfig.Table())
+		return nil, errors.New("{#error_sms_business_config_app_id_empty}" + s.modules.Dao().SmsBusinessConfig.Table())
 	}
 
 	data := sms_entity.SmsBusinessConfig{}
 
 	err := s.dao.SmsBusinessConfig.Ctx(ctx).Where(sms_do.SmsBusinessConfig{AppId: id}).Scan(&data)
 	if err != nil {
-		return nil, errors.New("根据业务id获取业务信息失败：" + err.Error() + s.dao.SmsBusinessConfig.Table())
+		return nil, errors.New("{#error_sms_business_config_get_by_id_failed}: " + err.Error() + s.dao.SmsBusinessConfig.Table())
 	}
 
 	res := kconv.Struct[*sms_model.SmsBusinessConfig](data, &sms_model.SmsBusinessConfig{})

@@ -70,7 +70,7 @@ func (s *sServiceProviderConfig) GetProviderById(ctx context.Context, id int64) 
 		return nil, errors.New("{#error_sms_provider_get_by_id_failed}: " + err.Error() + s.dao.SmsServiceProviderConfig.Table())
 	}
 
-	res := kconv.Struct[*sms_model.SmsServiceProviderConfig](data, &sms_model.SmsServiceProviderConfig{})
+	res := kconv.Struct(data, &sms_model.SmsServiceProviderConfig{})
 
 	return res, nil
 }
@@ -88,7 +88,7 @@ func (s *sServiceProviderConfig) GetProviderByPriority(ctx context.Context, prio
 		return nil, errors.New("{#error_sms_provider_get_by_id_failed}: " + err.Error() + s.dao.SmsServiceProviderConfig.Table())
 	}
 
-	res := kconv.Struct[*sms_model.SmsServiceProviderConfig](data, &sms_model.SmsServiceProviderConfig{})
+	res := kconv.Struct(data, &sms_model.SmsServiceProviderConfig{})
 
 	return res, nil
 }
@@ -107,7 +107,7 @@ func (s *sServiceProviderConfig) QueryProviderByNo(ctx context.Context, no strin
 		return nil, errors.New("{#error_sms_provider_get_by_code_failed}: " + err.Error() + s.dao.SmsServiceProviderConfig.Table())
 	}
 
-	ret := kconv.Struct[*sms_model.ServiceProviderConfigListRes](res, &sms_model.ServiceProviderConfigListRes{})
+	ret := kconv.Struct(res, &sms_model.ServiceProviderConfigListRes{})
 
 	return ret, nil
 }

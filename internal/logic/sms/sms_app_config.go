@@ -43,7 +43,7 @@ func (s *sAppConfig) GetAppConfigByName(ctx context.Context, appName string) (*s
 		return nil, errors.New("{#error_sms_app_config_get_by_name_failed}" + s.dao.SmsAppConfig.Table())
 	}
 
-	res := kconv.Struct[*sms_model.SmsAppConfig](data, &sms_model.SmsAppConfig{})
+	res := kconv.Struct(data, &sms_model.SmsAppConfig{})
 
 	return res, nil
 }
@@ -62,7 +62,7 @@ func (s *sAppConfig) GetAppConfigById(ctx context.Context, id int64) (*sms_model
 		return nil, errors.New("{#error_sms_app_config_get_by_id_failed}" + s.dao.SmsAppConfig.Table())
 	}
 
-	res := kconv.Struct[*sms_model.SmsAppConfig](data, &sms_model.SmsAppConfig{})
+	res := kconv.Struct(data, &sms_model.SmsAppConfig{})
 
 	return res, nil
 }

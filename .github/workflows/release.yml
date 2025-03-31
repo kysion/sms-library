@@ -4,6 +4,7 @@ on:
     push:
         branches:
             - main
+            - dev
     pull_request:
         types:
             - closed
@@ -11,15 +12,24 @@ on:
             - main
     workflow_dispatch:
         inputs:
-            version_type:
-                description: '版本更新类型 (补丁, 次版本, 主版本)'
+            version:
+                description: '版本号 (例如: v0.1.0)'
+                required: false
+                type: string
+            type:
+                description: '发布类型'
                 required: true
-                default: 'patch'
                 type: choice
                 options:
                     - patch
                     - minor
                     - major
+                default: 'patch'
+
+permissions:
+    contents: write
+    pull-requests: write
+    issues: write
 
 jobs:
     verify:
@@ -33,9 +43,9 @@ jobs:
                   fetch-depth: 0
 
             - name: 设置 Go 环境
-              uses: actions/setup-go@v5
+              uses: actions/setup-go@v4
               with:
-                  go-version: '>=1.24.0'
+                  go-version: '>=1.24.1'
                   cache: true
 
             - name: 验证依赖
@@ -45,126 +55,77 @@ jobs:
               run: go test -v ./...
 
     release:
-        name: 创建发布
-        needs: verify
+        name: 发布新版本
         runs-on: ubuntu-latest
-        if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true) || github.event_name == 'workflow_dispatch'
         steps:
             - name: 检出代码
               uses: actions/checkout@v4
               with:
                   fetch-depth: 0
-                  persist-credentials: false
 
             - name: 设置 Go 环境
-              uses: actions/setup-go@v5
+              uses: actions/setup-go@v4
               with:
-                  go-version: '>=1.24.0'
-                  cache: true
+                  go-version: '1.24.1'
 
-            - name: 整理 Go 模块
-              run: go mod tidy
-
-            # 手动版本更新处理（用于 workflow_dispatch 触发时）
-            - name: 获取最新标签（手动发布）
-              if: github.event_name == 'workflow_dispatch'
-              id: latest_tag
+            - name: 获取当前版本
+              id: current_version
               run: |
-                  echo "LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo 'v0.0.0')" >> $GITHUB_ENV
-                  echo "当前最新标签: ${{ env.LATEST_TAG }}"
+                  CURRENT_VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+                  echo "current=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
 
-            - name: 确定新版本号（手动发布）
-              if: github.event_name == 'workflow_dispatch'
+            - name: 计算新版本号
               id: new_version
               run: |
-                  LATEST_VERSION=${LATEST_TAG#v}
-                  IFS='.' read -r -a VERSION_PARTS <<< "$LATEST_VERSION"
-                  MAJOR=${VERSION_PARTS[0]:-0}
-                  MINOR=${VERSION_PARTS[1]:-0}
-                  PATCH=${VERSION_PARTS[2]:-0}
-
-                  # 根据输入或默认更新相应的版本号
-                  VERSION_TYPE="${{ github.event.inputs.version_type }}"
-
-                  if [ "$VERSION_TYPE" = "major" ]; then
-                    MAJOR=$((MAJOR+1))
-                    MINOR=0
-                    PATCH=0
-                  elif [ "$VERSION_TYPE" = "minor" ]; then
-                    MINOR=$((MINOR+1))
-                    PATCH=0
+                  if [ -n "${{ github.event.inputs.version }}" ]; then
+                    NEW_VERSION="${{ github.event.inputs.version }}"
                   else
-                    PATCH=$((PATCH+1))
+                    CURRENT_VERSION=${{ steps.current_version.outputs.current }}
+                    CURRENT_VERSION=${CURRENT_VERSION#v}  # 移除 v 前缀
+                    IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+                    
+                    case "${{ github.event.inputs.type }}" in
+                      "major")
+                        NEW_VERSION="v$((MAJOR + 1)).0.0"
+                        ;;
+                      "minor")
+                        NEW_VERSION="v${MAJOR}.$((MINOR + 1)).0"
+                        ;;
+                      *)
+                        NEW_VERSION="v${MAJOR}.${MINOR}.$((PATCH + 1))"
+                        ;;
+                    esac
                   fi
+                  echo "version=${NEW_VERSION}" >> $GITHUB_OUTPUT
 
-                  NEW_VERSION="v$MAJOR.$MINOR.$PATCH"
-                  echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-                  echo "新版本号将是: $NEW_VERSION (类型: $VERSION_TYPE)"
+            - name: 运行测试
+              run: go test -v ./...
 
-            # 使用 conventional-changelog 生成分类的变更日志（用于 workflow_dispatch 触发时）
-            - name: 设置 Node.js 环境（手动发布）
-              if: github.event_name == 'workflow_dispatch'
-              uses: actions/setup-node@v3
-              with:
-                  node-version: '20'
-
-            - name: 安装 conventional-changelog-cli（手动发布）
-              if: github.event_name == 'workflow_dispatch'
-              run: npm install -g conventional-changelog-cli
-
-            - name: 生成分类变更日志（手动发布）
-              if: github.event_name == 'workflow_dispatch'
-              run: |
-                  conventional-changelog -p angular -i CHANGELOG.md -s -r 0
-                  echo "# 版本 ${{ env.NEW_VERSION }}" > RELEASE_NOTES.md
-                  echo "" >> RELEASE_NOTES.md
-                  echo "发布日期: $(date +"%Y-%m-%d")" >> RELEASE_NOTES.md
-                  echo "" >> RELEASE_NOTES.md
-                  conventional-changelog -p angular -r 2 >> RELEASE_NOTES.md
-
-            # 创建手动发布
-            - name: 创建手动发布
-              if: github.event_name == 'workflow_dispatch'
-              uses: softprops/action-gh-release@v2
-              with:
-                  tag_name: ${{ env.NEW_VERSION }}
-                  name: 发布 ${{ env.NEW_VERSION }}
-                  body_path: RELEASE_NOTES.md
-                  draft: false
-                  prerelease: false
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-            # 自动语义化发布（用于 push 或 PR 合并触发时）
-            - name: 设置 Node.js 环境（语义化发布）
-              if: github.event_name != 'workflow_dispatch'
-              uses: actions/setup-node@v3
-              with:
-                  node-version: '20'
-
-            - name: 安装语义化发布依赖
-              if: github.event_name != 'workflow_dispatch'
-              run: |
-                  npm install -g semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/github
-
-            - name: 执行语义化发布
-              if: github.event_name != 'workflow_dispatch'
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: npx semantic-release
-
-            # 提交 go.mod 和 go.sum 的更改
-            - name: 提交并推送更改
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: 创建发布标签
               run: |
                   git config --local user.email "action@github.com"
                   git config --local user.name "GitHub Action"
-                  if git diff --quiet --exit-code go.mod go.sum; then
-                    echo "没有需要提交的更改"
-                  else
-                    git add go.mod go.sum
-                    VERSION="${{ env.NEW_VERSION || 'latest' }}"
-                    git commit -m "chore(deps): 更新依赖版本 for $VERSION"
+                  git tag -a ${{ steps.new_version.outputs.version }} -m "Release ${{ steps.new_version.outputs.version }}"
+                  git push origin ${{ steps.new_version.outputs.version }}
+
+            - name: 创建 Release
+              uses: softprops/action-gh-release@v2
+              with:
+                  tag_name: ${{ steps.new_version.outputs.version }}
+                  name: Release ${{ steps.new_version.outputs.version }}
+                  draft: false
+                  prerelease: false
+                  generate_release_notes: true
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: 更新 CHANGELOG
+              run: |
+                  npm install -g conventional-changelog-cli
+                  conventional-changelog -p conventionalcommits -i CHANGELOG.md -s -r 0
+
+                  if [[ -n $(git status -s) ]]; then
+                    git add CHANGELOG.md
+                    git commit -m "docs: 更新 CHANGELOG for ${{ steps.new_version.outputs.version }}"
                     git push
                   fi

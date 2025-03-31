@@ -2,6 +2,7 @@ package sms_module
 
 import (
 	"context"
+
 	"github.com/gogf/gf/v2/i18n/gi18n"
 	"github.com/kysion/base-library/utility/base_permission"
 	"github.com/kysion/sms-library/example/model"
@@ -81,10 +82,10 @@ func (m *Modules) SetI18n(i18n *gi18n.Manager) error {
 		i18n = gi18n.New()
 		i18n.SetLanguage("zh-CN")
 		//err := i18n.SetPath("i18n/" + gstr.ToLower(m.conf.KeyIndex))
-		err := i18n.SetPath("i18n/" + m.conf.I18nName)
-		if err != nil {
-			return err
-		}
+		// err := i18n.SetPath("i18n/" + m.conf.I18nName)
+		// if err != nil {
+		// return err
+		// }
 	}
 
 	m.i18n = i18n

@@ -3,6 +3,7 @@ package sms
 import (
 	"context"
 	"errors"
+
 	"github.com/kysion/base-library/utility/daoctl"
 	"github.com/kysion/base-library/utility/kconv"
 
@@ -50,7 +51,7 @@ func (s *sServiceProviderConfig) CreateProvider(ctx context.Context, info *sms_m
 	_, err := model.OmitNilData().Insert(data)
 
 	if err != nil {
-		return nil, errors.New("短信渠道商添加失败" + s.dao.SmsServiceProviderConfig.Table())
+		return nil, errors.New("{#error_sms_provider_add_failed}" + s.dao.SmsServiceProviderConfig.Table())
 	}
 
 	return s.GetProviderById(ctx, gconv.Int64(data.Id))
@@ -59,17 +60,17 @@ func (s *sServiceProviderConfig) CreateProvider(ctx context.Context, info *sms_m
 // GetProviderById 根据ID获取渠道商
 func (s *sServiceProviderConfig) GetProviderById(ctx context.Context, id int64) (*sms_model.SmsServiceProviderConfig, error) {
 	if id == 0 {
-		return nil, errors.New("渠道商id不能为空" + s.dao.SmsServiceProviderConfig.Table())
+		return nil, errors.New("{#error_sms_provider_id_empty}" + s.dao.SmsServiceProviderConfig.Table())
 	}
 
 	data := sms_entity.SmsServiceProviderConfig{}
 
 	err := s.dao.SmsServiceProviderConfig.Ctx(ctx).Where(sms_do.SmsServiceProviderConfig{Id: id}).Scan(&data)
 	if err != nil {
-		return nil, errors.New("根据id获取渠道商信息失败：" + err.Error() + s.dao.SmsServiceProviderConfig.Table())
+		return nil, errors.New("{#error_sms_provider_get_by_id_failed}: " + err.Error() + s.dao.SmsServiceProviderConfig.Table())
 	}
 
-	res := kconv.Struct[*sms_model.SmsServiceProviderConfig](data, &sms_model.SmsServiceProviderConfig{})
+	res := kconv.Struct(data, &sms_model.SmsServiceProviderConfig{})
 
 	return res, nil
 }
@@ -77,17 +78,17 @@ func (s *sServiceProviderConfig) GetProviderById(ctx context.Context, id int64) 
 // GetProviderByPriority 根据优先级获取渠道商
 func (s *sServiceProviderConfig) GetProviderByPriority(ctx context.Context, priority int) (*sms_model.SmsServiceProviderConfig, error) {
 	if priority == 0 {
-		return nil, errors.New("优先级不能为空" + s.dao.SmsServiceProviderConfig.Table())
+		return nil, errors.New("{#error_sms_provider_priority_empty}" + s.dao.SmsServiceProviderConfig.Table())
 	}
 
 	data := sms_entity.SmsServiceProviderConfig{}
 
 	err := s.dao.SmsServiceProviderConfig.Ctx(ctx).Where(sms_do.SmsServiceProviderConfig{Priority: priority}).Scan(&data)
 	if err != nil {
-		return nil, errors.New("根据id获取渠道商信息失败：" + err.Error() + s.dao.SmsServiceProviderConfig.Table())
+		return nil, errors.New("{#error_sms_provider_get_by_id_failed}: " + err.Error() + s.dao.SmsServiceProviderConfig.Table())
 	}
 
-	res := kconv.Struct[*sms_model.SmsServiceProviderConfig](data, &sms_model.SmsServiceProviderConfig{})
+	res := kconv.Struct(data, &sms_model.SmsServiceProviderConfig{})
 
 	return res, nil
 }
@@ -95,7 +96,7 @@ func (s *sServiceProviderConfig) GetProviderByPriority(ctx context.Context, prio
 // QueryProviderByNo 根据No编号获取渠道商
 func (s *sServiceProviderConfig) QueryProviderByNo(ctx context.Context, no string, params *base_model.SearchParams) (*sms_model.ServiceProviderConfigListRes, error) {
 	if no == "" {
-		return nil, errors.New("渠道商编号不能为空" + s.dao.SmsServiceProviderConfig.Table())
+		return nil, errors.New("{#error_sms_provider_code_empty}" + s.dao.SmsServiceProviderConfig.Table())
 	}
 
 	res, err := daoctl.Query[sms_entity.SmsServiceProviderConfig](s.dao.SmsServiceProviderConfig.Ctx(ctx).Where(
@@ -103,10 +104,10 @@ func (s *sServiceProviderConfig) QueryProviderByNo(ctx context.Context, no strin
 		params,
 		false)
 	if err != nil {
-		return nil, errors.New("根据编号获取渠道商信息失败：" + err.Error() + s.dao.SmsServiceProviderConfig.Table())
+		return nil, errors.New("{#error_sms_provider_get_by_code_failed}: " + err.Error() + s.dao.SmsServiceProviderConfig.Table())
 	}
 
-	ret := kconv.Struct[*sms_model.ServiceProviderConfigListRes](res, &sms_model.ServiceProviderConfigListRes{})
+	ret := kconv.Struct(res, &sms_model.ServiceProviderConfigListRes{})
 
 	return ret, nil
 }

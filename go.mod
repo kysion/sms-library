@@ -3,7 +3,7 @@ module github.com/kysion/sms-library
 go 1.24.0
 
 require (
-	github.com/kysion/base-library v0.2.3
+	github.com/kysion/base-library v0.3.1
 	github.com/yitter/idgenerator-go v1.3.3
 )
 
@@ -15,7 +15,7 @@ require (
 	github.com/alibabacloud-go/dysmsapi-20170525/v2 v2.0.18
 	github.com/alibabacloud-go/endpoint-util v1.1.1 // indirect
 	github.com/alibabacloud-go/openapi-util v0.1.1 // indirect
-	github.com/alibabacloud-go/tea v1.3.4
+	github.com/alibabacloud-go/tea v1.3.7
 	github.com/alibabacloud-go/tea-utils v1.4.5 // indirect
 	github.com/alibabacloud-go/tea-utils/v2 v2.0.7 // indirect
 	github.com/alibabacloud-go/tea-xml v1.1.3 // indirect
@@ -43,15 +43,15 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/redis/go-redis/v9 v9.7.3 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1128
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.1128
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1134
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.1133
 	github.com/tjfoc/gmsm v1.4.1 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
 	go.opentelemetry.io/otel v1.35.0 // indirect
 	go.opentelemetry.io/otel/metric v1.35.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.35.0 // indirect
 	go.opentelemetry.io/otel/trace v1.35.0 // indirect
-	golang.org/x/net v0.37.0 // indirect
+	golang.org/x/net v0.38.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/text v0.23.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
